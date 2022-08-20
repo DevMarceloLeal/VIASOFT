@@ -1,0 +1,28 @@
+unit Auxiliar.Variaveis.Globais;
+
+interface
+
+uses
+  Vcl.Forms,
+  Datasnap.DBClient;
+
+type
+  TRecordTotais = record
+    TotalPai : Currency;
+    TotalFilho: CUrrency;
+    TotalGeral: Currency;
+  end;
+
+var
+  gTopo: Integer;
+  gEsquerda: Integer;
+  gLargura: Integer;
+  gComprimento: Integer;
+  gPosicao: TPosition = poMainFormCenter;
+  gNumeroPedido: String;
+  gAcertouEstoque: Boolean;
+  gJanelas_Abertas: Integer;
+
+implementation
+
+end.

@@ -1,0 +1,50 @@
+unit Controller.Factory;
+
+interface
+
+uses
+  Controller.Interfaces,
+  Controller.Observer.Interfaces,
+  Controller.Observer.Factory,
+  Model.Centro.Custos;
+
+type
+  TController = class(TInterfacedObject, iController)
+  private
+    FObserver: iSubject;
+    FCCustosPai: iModel;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iController;
+    function Observer: iSubject;
+    function CentroCustos: iModel;
+  end;
+
+implementation
+
+{ TController }
+
+constructor TController.Create;
+begin
+  FObserver   := TObserver.New;
+  FCCustosPai := TModelCentroCustos.New;
+end;
+
+destructor TController.Destroy;
+begin
+  inherited;
+end;
+
+class function TController.New: iController;
+begin
+  Result := Self.Create;
+end;
+
+function TController.CentroCustos: iModel;
+begin
+  Result := FCCustosPai;
+end;
+
+end.
+

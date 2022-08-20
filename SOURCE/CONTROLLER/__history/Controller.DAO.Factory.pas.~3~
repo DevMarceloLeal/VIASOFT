@@ -1,0 +1,62 @@
+unit Controller.DAO.Factory;
+
+interface
+
+uses
+  Controller.DAO.Interfaces,
+  Model.DAO.Parametros,
+  Model.DAO.Lojas;
+
+type
+  TControllerDAO = class(TInterfacedObject, iControllerDAO)
+  private
+    FDAOParametros: iModelDAOParametros;
+    FDAOLojas: iModelDAO;
+    FDAOUsuarios: iModelDAO;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iControllerDAO;
+    function Parametros: iModelDAOParametros;
+    function Lojas: iModelDAO;
+    function Usuarios: iModelDAO;
+  end;
+
+implementation
+
+{ TControllerDAO }
+
+constructor TControllerDAO.Create;
+begin
+  FDAOParametros := TModelDAOParametros.New;
+  FDAOLojas      := TModelDAOLojas.New;
+//  FDAODoacao     := TModelDAODoacao.New;
+end;
+
+destructor TControllerDAO.Destroy;
+begin
+  inherited;
+end;
+
+class function TControllerDAO.New: iControllerDAO;
+begin
+  Result := Self.Create;
+end;
+
+function TControllerDAO.Parametros: iModelDAOParametros;
+begin
+  Result := FDAOParametros;
+end;
+
+function TControllerDAO.Lojas: iModelDAO;
+begin
+  Result := FDAOLojas;
+end;
+
+function TControllerDAO.Usuarios: iModelDAO;
+begin
+  Result := FDAOUsuarios;
+end;
+
+end.
+

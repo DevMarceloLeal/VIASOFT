@@ -1,0 +1,132 @@
+unit Auxiliar.Dialogos;
+
+interface
+
+uses
+  Winapi.Windows,
+  System.UITypes,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Controls,
+  Auxiliar.Validacoes,
+  Auxiliar.Fundo.Esmaecido, Vcl.Forms;
+
+  function Msg(StrMsg: String; Tipo: Integer = 1): Boolean;
+  function Pergunta(StrMsg: String): Boolean;
+
+var
+  I: Integer;
+  StrTitulo: String = 'VIASOFT Sistemas';
+  DlgBotao: TMsgDlgBtn;
+  DlgType: TMsgDlgType;
+  Fundo: TFundoEsmaecido;
+  bhMsgSys: TBalloonHint;
+  Janela: TForm;
+
+implementation
+
+/// ####################################################################################################################
+/// Função   : Msg()
+/// Objetivo : Responsável pela janela de mensagens nativas da linguagem
+/// ####################################################################################################################
+function Msg(StrMsg: String; Tipo: Integer = 1): Boolean;
+begin
+  Fundo := TFundoEsmaecido.New;
+  bhMsgSys := TBalloonHint.Create(nil);
+  bhMsgSys.Style := bhsBalloon;
+
+  DlgType := mtInformation;
+  if Tipo = 2 then
+     DlgType := mtWarning
+  else if Tipo = 3 then
+     DlgType := mtError
+  else if Tipo = 4 then
+     DlgType := mtCustom;
+
+  Fundo.Escurecer;
+  if Tipo <= 3 then
+     with CreateMessageDialog(StrMsg, DlgType, [mbOK]) do
+  else
+     with CreateMessageDialog(StrMsg, DlgType, mbYesNo) do
+     try
+       for I := 0 to ComponentCount - 1 do
+         if Components[I] IS TButton then
+            begin
+              with TButton(Components[I]) do
+                case ModalResult of
+                  mrOK:
+                    begin
+                      Caption := '&OK';
+                      Cursor := crHandPoint;
+                      Hint := 'Clique Para Encerrar a Janela';
+                      ModalResult := mrOK;
+                    end;
+                  mrYes:
+                    begin
+                      Caption := '&Sim';
+                      Cursor := crHandPoint;
+                      Hint := 'Clique Para Informar Sim';
+                      ModalResult := mrYes;
+                    end;
+                  mrNo:
+                    begin
+                      Caption := '&Não';
+                      Cursor := crHandPoint;
+                      Hint := 'Clique Para Informar Não';
+                      ModalResult := mrNo;
+                    end;
+                end;
+            end;
+
+       MessageBeep(MB_ICONINFORMATION);
+
+       Caption := StrTitulo;
+       CustomHint := bhMsgSys;
+       ShowHint := True;
+       ShowModal;
+     finally
+       Fundo.Clarear;
+       Fundo.Free;
+       bhMsgSys.Free;
+       Free;
+       Result := (ModalResult = mrOK) or (ModalResult = mrYes);
+     end;
+end;
+
+  /// ####################################################################################################################
+  /// Função   : Pergunta()
+  /// Objetivo : Responsável pela janela de perguntas
+  /// ####################################################################################################################
+  function Pergunta(StrMsg: String): Boolean;
+  begin
+    Fundo := TFundoEsmaecido.New;
+    bhMsgSys := TBalloonHint.Create(nil);
+    bhMsgSys.Style := bhsBalloon;
+
+    Fundo.Escurecer;
+    with CreateMessageDialog(StrMsg, mtCustom, mbYesNo) do
+      try
+        for I := 0 to ComponentCount - 1 do
+          if Components[I] IS TButton then
+          begin
+            with TButton(Components[I]) do
+              case ModalResult of
+              end;
+          end;
+
+        MessageBeep(MB_ICONINFORMATION);
+
+        Caption := StrTitulo;
+        CustomHint := bhMsgSys;
+        ShowHint := True;
+        ShowModal;
+      finally
+        Fundo.Clarear;
+        Fundo.Free;
+        bhMsgSys.Free;
+        Free;
+        Result := (ModalResult = mrYes);
+      end;
+  end;
+
+end.

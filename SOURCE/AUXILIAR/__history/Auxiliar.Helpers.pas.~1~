@@ -1,0 +1,33 @@
+unit Auxiliar.Helpers;
+
+interface
+
+uses
+  System.SysUtils,
+  Vcl.StdCtrls,
+  Auxiliar.Conversoes;
+
+type
+  TEditHelper = class Helper for TEdit
+    function IsEmpty: Boolean;
+    function ToMoeda: String;
+  end;
+
+implementation
+
+{ TEditHelper }
+
+function TEditHelper.IsEmpty: Boolean;
+begin
+  Result := Trim(Self.Text) = EmptyStr;
+end;
+
+function TEditHelper.ToMoeda: String;
+begin
+  if ToStr(Self.Text) <> EmptyStr then
+     Self.Text := FormatCurr('###,##0.00', StrCurrency(Self.Text))
+  else
+     Self.Text := '0,00';
+end;
+
+end.

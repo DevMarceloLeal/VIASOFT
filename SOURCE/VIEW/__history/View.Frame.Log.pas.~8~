@@ -1,0 +1,45 @@
+unit View.Frame.Log;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Controller.Observer.Interfaces,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TFrameLog = class(TFrame, IObserver)
+    MemoLog: TMemo;
+    LabelTitulo: TLabel;
+  public
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+{ TFrameLog }
+
+procedure TFrameLog.Atualizar(Notificacao: TNotificacao);
+var
+  TextoLog: string;
+
+begin
+  TextoLog := Format('Um Centro de Custo %s no VALOR DE %s foi adicionado', [Notificacao.CentroCustos, FormatFloat('###,##0.00', Notificacao.Valor)]);
+
+  // Adiciona o log no Memo
+  MemoLog.Lines.Add(TextoLog);
+end;
+
+end.

@@ -1,0 +1,145 @@
+unit Controller.Cadastros.Factory;
+
+interface
+
+uses
+  Controller.Interfaces,
+  Model.Cadastros.Lojas,
+  Model.Cadastros.Usuarios,
+  Model.Cadastros.Montadores,
+  Model.Cadastros.Transportadoras,
+  Model.Cadastros.Plano.Contas,
+  MOdel.Cadastros.Formas.Pagamento,
+  Model.Cadastros.Unidades,
+  Model.Cadastros.Grupos,
+  Model.Cadastros.Aliquotas.ICMS,
+  Model.Cadastros.CFOP;
+
+type
+  TModelCadastros = class(TInterfacedObject, iModelCadastros)
+  private
+    FLojas,
+    FUsuarios,
+    FMontadores,
+    FTransportadoras,
+    FPlanoContas,
+    FFormasPagto,
+    FUnidades,
+    FGrupos,
+    FAliquotasICMS,
+    FCFOP,
+    FIBPT,
+    FCEST,
+    FTributacao: iModel;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iModelCadastros;
+    function Lojas: iModel;
+    function Usuarios: iModel;
+    function Montadores: iModel;
+    function Transportadoras: iModel;
+    function PlanoContas: iModel;
+    function FormasPagto: iModel;
+    function Unidades: iModel;
+    function Grupos: iModel;
+    function AliquotasICMS: iModel;
+    function CFOP: iModel;
+    function IBPT: iModel;
+    function CEST: iModel;
+    function Tributacao: iModel;
+  end;
+
+implementation
+
+{ TModelCadastros }
+
+constructor TModelCadastros.Create;
+begin
+  FLojas           := TModelLojas.New;
+  FUsuarios        := TModelUsuarios.New;
+  FMontadores      := TModelMontadores.New;
+  FTransportadoras := TModelTransportadoras.New;
+  FPlanoContas     := TModelPlanoContas.New;
+  FFormasPagto     := TModelFormasPagamento.New;
+  FUnidades        := TModelUnidades.New;
+  FGrupos          := TModelGrupos.New;
+  FAliquotasICMS   := TModelAliquotasICMS.New;
+end;
+
+destructor TModelCadastros.Destroy;
+begin
+  inherited;
+end;
+
+class function TModelCadastros.New: iModelCadastros;
+begin
+  Result := Self.Create;
+end;
+
+function TModelCadastros.Lojas: iModel;
+begin
+  Result := FLojas;
+end;
+
+function TModelCadastros.Usuarios: iModel;
+begin
+  Result := FUsuarios;
+end;
+
+function TModelCadastros.Montadores: iModel;
+begin
+  Result := FMontadores;
+end;
+
+function TModelCadastros.Transportadoras: iModel;
+begin
+  Result := FTransportadoras;
+end;
+
+function TModelCadastros.PlanoContas: iModel;
+begin
+  Result := FPlanoContas;
+end;
+
+function TModelCadastros.FormasPagto: iModel;
+begin
+  Result := FFormasPagto;
+end;
+
+function TModelCadastros.Unidades: iModel;
+begin
+  Result := FUnidades;
+end;
+
+function TModelCadastros.Grupos: iModel;
+begin
+  Result := FGrupos;
+end;
+
+function TModelCadastros.AliquotasICMS: iModel;
+begin
+  Result := FAliquotasICMS;
+end;
+
+function TModelCadastros.CFOP: iModel;
+begin
+  Result := FCFOP;
+end;
+
+function TModelCadastros.IBPT: iModel;
+begin
+  Result := FIBPT;
+end;
+
+function TModelCadastros.CEST: iModel;
+begin
+  Result := FCEST;
+end;
+
+function TModelCadastros.Tributacao: iModel;
+begin
+  Result := FTributacao;
+end;
+
+end.

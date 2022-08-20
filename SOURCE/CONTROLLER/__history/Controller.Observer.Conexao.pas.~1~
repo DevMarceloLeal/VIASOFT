@@ -1,0 +1,60 @@
+unit Controller.Observer.Conexao;
+
+interface
+
+uses
+  System.Generics.Collections, System.SysUtils,
+  Controller.Observer.Interfaces;
+
+type
+  TObserverConexao = class(TInterfacedObject, iSubjectConexao)
+  private
+    FLista : TList<iObserverConexao>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iSubjectConexao;
+    function Add(Value: iObserverConexao): iSubjectConexao;
+    function Notify(Value: TRecordConexao): iSubjectConexao;
+  end;
+
+implementation
+
+uses
+  Vcl.Dialogs;
+
+{ TObserverConexao }
+
+constructor TObserverConexao.Create;
+begin
+  FLista := TList<iObserverConexao>.Create;
+end;
+
+destructor TObserverConexao.Destroy;
+begin
+  FreeAndNil(FLista);
+  inherited;
+end;
+
+class function TObserverConexao.New: iSubjectConexao;
+begin
+  Result := Self.Create;
+end;
+
+function TObserverConexao.Add(Value: iObserverConexao): iSubjectConexao;
+begin
+  Result := Self;
+  FLista.Add(Value);
+end;
+
+function TObserverConexao.Notify(Value: TRecordConexao): iSubjectConexao;
+var
+  I: Integer;
+
+begin
+  Result := Self;
+  for I := 0 to pred(FLista.Count) do
+    FLista[I].UpdateConexao(Value);
+end;
+
+end.

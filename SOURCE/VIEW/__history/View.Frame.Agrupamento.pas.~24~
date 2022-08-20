@@ -1,0 +1,128 @@
+unit View.Frame.Agrupamento;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Data.DB,
+  Datasnap.DBClient,
+  Controller.Interfaces,
+  Auxiliar.DataGrid,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TFrameAgrupamento = class(TFrame, iObserver)
+    dbgPai: TDBGrid;
+    dbgFilho: TDBGrid;
+    LabelCreditos: TLabel;
+    LabelDebitos: TLabel;
+  private
+    cdsPai, cdsFilho: TClientDataSet;
+    dtsPai, dtsFilho: TDataSource;
+  public
+    constructor Create(AOwner: TComponent) ; override;
+    destructor Destroy; override;
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+const
+  // Configuração do DBGrid
+  aFields  : array[0..1] of String  = ('CENTROCUSTOS', 'VALOR');
+  aHeaders : array[0..1] of String  = ('Código', 'Valor R$');
+  aWidths  : array[0..1] of Integer = ( 70, 100);
+  aAligns  : array[0..1] of String  = ('Center', 'Right');
+
+implementation
+
+{$R *.dfm}
+
+{ TFrameAgrupamento }
+
+constructor TFrameAgrupamento.Create(AOwner: TComponent);
+begin
+  inherited;
+  cdsPai   := TClientDataSet.Create(nil);
+  cdsFilho := TClientDataSet.Create(nil);
+  dtsPai   := TDataSource.Create(nil);
+  dtsFilho := TDataSource.Create(nil);
+
+  cdsPai.FieldDefs.Add('CENTROCUSTOS', ftString, 6);
+  cdsPai.FieldDefs.Add('VALOR', ftFloat);
+  cdsFilho.FieldDefs.Add('CENTROCUSTOS', ftString, 6);
+  cdsFilho.FieldDefs.Add('VALOR', ftFloat);
+
+  if not(cdsPai.Active) then
+     begin
+       cdsPai.CreateDataSet;
+       cdsPai.EmptyDataSet;
+       cdsPai.Active := true;
+       dtsPai.DataSet := cdsPai;
+     end;
+
+  if not(cdsFilho.Active) then
+     begin
+       cdsFilho.CreateDataSet;
+       cdsFilho.EmptyDataSet;
+       cdsFilho.Active := true;
+       dtsFilho.DataSet := cdsFilho;
+     end;
+
+  dbgPai.DataSource   := dtsPai;
+  dbgFilho.DataSource := dtsFilho;
+
+  MontarGrid(dbgPai, aFields, aHeaders, aAligns, aWidths);
+  MontarGrid(dbgFilho, aFields, aHeaders, aAligns, aWidths);
+  FormataDataSet(cdsPai);
+  FormataDataSet(cdsFilho);
+end;
+
+destructor TFrameAgrupamento.Destroy;
+begin
+  inherited;
+end;
+
+procedure TFrameAgrupamento.Atualizar(Notificacao: TNotificacao);
+var
+  FCodPai, FCodFilho: String;
+  FValor: Real;
+
+begin
+  FCodPai   := Copy(Notificacao.CentroCustos, 1, 2);
+  FCodFilho := Copy(Notificacao.CentroCustos, 3, 4);
+  FValor    := Notificacao.Valor;
+
+  // Localiza o Centro de Custo para somar o valor já lançado anteriormente
+  if cdsPai.Locate('CENTROCUSTOS', FCodPai, []) then
+     begin
+       cdsPai.Edit;
+       cdsPai.FieldByName('VALOR').AsFloat := cdsPai.FieldByName('VALOR').AsFloat + FValor;
+       cdsPai.Post;
+       cdsPai.First;
+     end
+  else
+     cdsPai.AppendRecord([FCodPai, FValor]);
+
+  if cdsFilho.Locate('CENTROCUSTOS', FCodFilho, []) then
+     begin
+       cdsFilho.Edit;
+       cdsFilho.FieldByName('VALOR').AsFloat := cdsFilho.FieldByName('VALOR').AsFloat + FValor;
+       cdsFilho.Post;
+       cdsFilho.First;
+     end
+  else
+     cdsFilho.AppendRecord([FCodFilho, FValor]);
+end;
+
+end.

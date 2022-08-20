@@ -1,0 +1,27 @@
+object FrameLog: TFrameLog
+  Left = 0
+  Top = 0
+  Width = 300
+  Height = 110
+  TabOrder = 0
+  PixelsPerInch = 96
+  object LabelTitulo: TLabel
+    Left = 0
+    Top = 0
+    Width = 95
+    Height = 15
+    Align = alTop
+    Alignment = taCenter
+    Caption = 'Log de Opera'#231#245'es'
+  end
+  object MemoLog: TMemo
+    Left = 0
+    Top = 13
+    Width = 300
+    Height = 97
+    Align = alClient
+    ReadOnly = True
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+end

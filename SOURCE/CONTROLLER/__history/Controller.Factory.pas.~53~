@@ -1,0 +1,63 @@
+unit Controller.Factory;
+
+interface
+
+uses
+  Controller.Interfaces,
+  Model.Observer,
+  Model.Operacoes,
+  Model.Agrupamentos;
+
+type
+  TController = class(TInterfacedObject, iController)
+  private
+    FObserver: iSubject;
+    FOperacoes: iModelObs;
+    FAgrupamentos: iModel;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iController;
+    function Observer: iSubject;
+    Function Operacoes: iModelObs;
+    Function Agrupamentos: iModel;
+  end;
+
+implementation
+
+{ TController }
+
+constructor TController.Create;
+begin
+  FObserver     := TModelObserver.New;
+  FOperacoes    := TModelOperacoes.New.Observer(FObserver);
+  FAgrupamentos := TModelAgrupamentos.New;
+end;
+
+destructor TController.Destroy;
+begin
+  inherited;
+end;
+
+class function TController.New: iController;
+begin
+  Result := Self.Create;
+end;
+
+function TController.Observer: iSubject;
+begin
+  Result := FObserver;
+end;
+
+function TController.Operacoes: iModelObs;
+begin
+  Result := FOperacoes;
+end;
+
+function TController.Agrupamentos: iModel;
+begin
+  Result := FAgrupamentos;
+end;
+
+end.
+

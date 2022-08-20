@@ -1,0 +1,70 @@
+unit Controller.Observer.Factory;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Generics.Collections,
+  Vcl.Dialogs,
+  Controller.Observer.Interfaces,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TObserver = class(TInterfacedObject, iSubject)
+  private
+    FObservers: TList<IObserver>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iSubject;
+    procedure Adicionar(Observer: IObserver);
+    procedure Remover(Observer: IObserver);
+    procedure Notificar;
+  end;
+
+implementation
+
+{ TObserver }
+
+constructor TObserver.Create;
+begin
+  FObservers := TList<iObserver>.Create;
+end;
+
+destructor TObserver.Destroy;
+begin
+  FObservers.Free;
+  inherited;
+end;
+
+class function TObserver.New: iSubject;
+begin
+  Result := Self.Create;
+end;
+
+procedure TObserver.Adicionar(Observer: IObserver);
+begin
+  FObservers.Add(Observer);
+end;
+
+procedure TObserver.Remover(Observer: IObserver);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TObserver.Notificar;
+var
+  Notificacao: TNotificacao;
+  Observer: IObserver;
+
+begin
+  Notificacao.CentroCustos := GetValor(Self,'edtCentroCustos');
+  Notificacao.Valor        := StrToFloat(GetValor(Self,'edtValor').Replace('.',''));
+
+  for Observer in FObservers do
+    begin
+      Observer.Atualizar(Notificacao);
+    end;
+end;
+
+end.

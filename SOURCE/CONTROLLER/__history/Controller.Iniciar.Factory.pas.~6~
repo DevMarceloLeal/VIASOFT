@@ -1,0 +1,66 @@
+unit Controller.Iniciar.Factory;
+
+interface
+
+uses
+  Controller.Interfaces,
+  Model.Iniciar.Clientes,
+  Model.Iniciar.Fornecedores,
+  Model.Iniciar.Fabricantes,
+  Model.Iniciar.Produtos,
+  Model.Iniciar.Contas.Pagar;
+
+type
+  TModelIniciar = class(TInterfacedObject, iModelIniciar)
+  private
+    FClientes,
+    FFornecedores,
+    FFabricantes: iModel;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iModelIniciar;
+    function Clientes: iModel;
+    function Fornecedores: iModel;
+    function Fabricantes: iModel;
+    function Produtos: iModel;
+  end;
+
+implementation
+
+{ TModelIniciar }
+
+constructor TModelIniciar.Create;
+begin
+  FClientes        := TModelClientes.New;
+  FFornecedores    := TModelFornecedores.New;
+  FFabricantes     := TModelFabricantes.New;
+
+end;
+
+destructor TModelIniciar.Destroy;
+begin
+  inherited;
+end;
+
+class function TModelIniciar.New: iModelIniciar;
+begin
+  Result := Self.Create;
+end;
+
+function TModelIniciar.Clientes: iModel;
+begin
+  Result := FClientes;
+end;
+
+function TModelIniciar.Fornecedores: iModel;
+begin
+  Result := FFornecedores;
+end;
+
+function TModelIniciar.Fabricantes: iModel;
+begin
+  Result := FFabricantes;
+end;
+
+end.

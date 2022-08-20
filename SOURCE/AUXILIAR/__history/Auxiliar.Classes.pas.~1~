@@ -1,0 +1,461 @@
+unit Auxiliar.Classes;
+
+interface
+
+uses
+  System.Classes,
+  System.SysUtils,
+  System.Rtti,
+  System.UITypes,
+  System.TypInfo,
+  System.Variants,
+  Vcl.Forms,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Samples.Spin,
+  Vcl.ExtCtrls,
+  Vcl.Graphics,
+  Data.DB,
+  Datasnap.DBClient,
+  Model.Conexao.Interfaces,
+  Model.Conexao.FireDAC.DataFunctions,
+  Auxiliar.Datas,
+  Auxiliar.Forms,
+  Auxiliar.Dialogos,
+  Auxiliar.Conversoes,
+  Auxiliar.Validacoes,
+  Auxiliar.Comandos.SQL,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TClasses = class
+  private
+    FObjeto: TObject;
+    FDataSource: TDataSource;
+    FFormulario: TForm;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: TClasses;
+    function Formulario(pJanela: TForm): TClasses;
+    function Objeto(pObjeto: TObject): TClasses;
+    function DataSource(pDSDados: TDataSource): TClasses;
+    function DataSource_To_Form: TClasses;
+    function Form_To_DataSource: TClasses;
+    function Classe_To_Form: TClasses;
+    function Form_To_Classe: TClasses;
+  end;
+
+implementation
+
+uses
+  FireDAC.Comp.DataSet;
+
+constructor TClasses.Create;
+begin
+
+end;
+
+destructor TClasses.Destroy;
+begin
+  inherited;
+end;
+
+class function TClasses.New: TClasses;
+begin
+  Result := Self.Create;
+end;
+
+//####################################################################################################################
+// Função   : Formulario()
+// Objetivo : Responsável Pela Definição do Form a Ser Trabalhado
+//####################################################################################################################
+function TClasses.Formulario(pJanela: TForm): TClasses;
+begin
+  Result := Self;
+  FFormulario := pJanela;
+end;
+
+//####################################################################################################################
+// Função   : DataSource()
+// Objetivo : Responsável Pela Definição do DataSource a Ser Trabalhado
+//####################################################################################################################
+function TClasses.DataSource(pDSDados: TDataSource): TClasses;
+begin
+  Result := Self;
+  FDataSource := pDSDados;
+end;
+
+//####################################################################################################################
+// Função   : Objeto()
+// Objetivo : Responsável Pela Definição do Objeto a Ser Trabalhado
+//####################################################################################################################
+function TClasses.Objeto(pObjeto: TObject): TClasses;
+begin
+  Result := Self;
+  FObjeto := pObjeto;
+end;
+
+//####################################################################################################################
+// Função   : DataSource_To_Form()
+// Objetivo : Responsável Pela Colocação de Um DataSource No Form
+//####################################################################################################################
+function TClasses.DataSource_To_Form: TClasses;
+var
+  Contexto: TRttiContext;
+  Tipo: TRttiType;
+  Propriedade: TRttiProperty;
+  Valor: variant;
+
+begin
+  Result := Self;
+
+  // Cria o contexto do RTTI
+  Contexto := TRttiContext.Create;
+
+  // Obtém as informações de RTTI da classe
+  Tipo := Contexto.GetType(FObjeto.ClassInfo);
+
+  try
+    // Executa um loop nas propriedades do objeto
+    for Propriedade in Tipo.GetProperties do
+      begin
+        if (Propriedade.PropertyType.ToString.Contains('Field')) and (not Propriedade.Name.Contains('Key'))  then
+           begin
+             // Obtém o valor do registro
+             if (UpperCase(Propriedade.PropertyType.ToString) = 'CURRENCY') then
+                Valor := FDataSource.DataSet.FieldByName(Propriedade.Name).AsCurrency
+             else
+                Valor := FDataSource.DataSet.FieldByName(Propriedade.Name).AsVariant;
+
+             // Encontra o componente relacionado, como, por exemplo, "edtNome"
+             Componente_Valor(FFormulario, Format('edt%s',[Propriedade.Name]), Converte_Variant(Valor));
+           end;
+      end;
+  Except on E: Exception do
+      begin
+        MsgSys(E.Message,3);
+        Contexto.Free;
+      end;
+  end;
+end;
+
+//####################################################################################################################
+// Função   : DataSource_To_Form()
+// Objetivo : Responsável Pela Colocação de Um DataSource No Form
+//####################################################################################################################
+function TClasses.Form_To_DataSource: TClasses;
+var
+  Contexto: TRttiContext;
+  Tipo: TRttiType;
+  Propriedade: TRttiProperty;
+  Valor: variant;
+  Componente: TComponent;
+
+begin
+  Result := Self;
+
+  // Cria o contexto do RTTI
+  Contexto := TRttiContext.Create;
+
+  // Obtém as informações de RTTI da classe
+  Tipo := Contexto.GetType(FObjeto.ClassInfo);
+
+  try
+    // Executa um loop nas propriedades do objeto
+    for Propriedade in Tipo.GetProperties do
+      begin
+        if (Propriedade.PropertyType.ToString.Contains('Field')) and (not Propriedade.Name.Contains('Key'))  then
+           begin
+             // Encontra o componente relacionado, como, por exemplo, "edtNome"
+             Componente := FFormulario.FindComponent(Format('edt%s',[Propriedade.Name]));
+             if Componente <> nil then
+                begin
+                  // Testa se o componente é da classe "TEdit" para acessar a propriedade "Text"
+                  if Componente is TEdit then
+                     begin
+                       Valor := (Componente as TEdit).Text;
+                     end;
+
+                  // Testa se o componente é da classe "TRichEdit" para acessar a propriedade "Text"
+                  if Componente is TRichEdit then
+                     begin
+                       Valor := (Componente as TRichEdit).Text;
+                     end;
+
+                  // Testa se o componente é da classe "TLabel" para acessar a propriedade "Text"
+                  if Componente is TLabel then
+                     begin
+                       Valor := (Componente as TLabel).Caption;
+                     end;
+
+                  // Testa se o componente é da classe "TDateTimePicker" para acessar a propriedade "Text"
+                  if Componente is TDateTimePicker then
+                     begin
+                       Valor := TCustomEdit((Componente as TDateTimePicker)).Text;
+                     end;
+
+                  // Testa se o componente é da classe "TComboBox" para acessar a propriedade "Text"
+                  if Componente is TComboBox then
+                     begin
+                       if FDataSource.DataSet.FieldByName(Propriedade.Name).DataType = ftInteger then
+                          Valor := (Componente as TComboBox).ItemIndex + 1
+                       else
+                          Valor := (Componente as TComboBox).Text;
+                     end;
+
+                  // Testa se o componente é da classe "TMemo" para acessar a propriedade "Lines"
+                  if (Componente is TMemo) then
+                     begin
+                       Valor := WideCharToString((Componente as TMemo).Lines.GetText);
+                     end;
+
+                  // Testa se o componente é da classe "TRadioGroup" para acessar a propriedade "Items[ItemIndex]"
+                  if Componente is TRadioGroup then
+                     begin
+                       Valor := (Componente as TRadioGroup).Items[(Componente as TRadioGroup).ItemIndex];
+                     end;
+
+                  // Testa se o componente é da classe "TCheckBox" para acessar a propriedade "Checked"
+                  if Componente is TCheckBox then
+                     begin
+                       Valor := (Componente as TCheckBox).Checked;
+                     end;
+
+                  // Testa se o componente é da classe "TTrackBar" para acessar a propriedade "Position"
+                  if Componente is TTrackBar then
+                     begin
+                       Valor := (Componente as TTrackBar).Position;
+                     end;
+
+                  // Testa se o componente é da classe "TShape" para acessar a propriedade "Brush.Color"
+                  if Componente is TShape then
+                     begin
+                       Valor := (Componente as TShape).Brush.Color;
+                     end;
+
+                  // Atribui o Valor Encontrado no Form ao DataSource
+                  FDataSource.DataSet.FieldByName(Propriedade.Name).AsVariant := Valor;
+                end;
+           end;
+      end;
+  Except on E: Exception do
+      begin
+        MsgSys(E.Message,3);
+        Contexto.Free;
+      end;
+  end;
+end;
+
+//####################################################################################################################
+// Função   : Classe_To_Form()
+// Objetivo : Responsável Pela Colocação de Uma Classe Nos Edit´s do Form
+//####################################################################################################################
+function TClasses.Classe_To_Form: TClasses;
+var
+  Contexto: TRttiContext;
+  Tipo: TRttiType;
+  Propriedade: TRttiProperty;
+  Valor: variant;
+  Componente: TComponent;
+
+begin
+  Result := Self;
+
+  // Cria o contexto do RTTI
+  Contexto := TRttiContext.Create;
+
+  // Obtém as informações de RTTI da classe
+  Tipo := Contexto.GetType(FObjeto.ClassInfo);
+
+  // Limpa todos os campos editáveis do form
+  Limpar_Edits(FFormulario);
+
+  try
+    // Executa um loop nas propriedades do objeto
+    for Propriedade in Tipo.GetProperties do
+      begin
+        // Obtém o valor da propriedade
+        Valor := Propriedade.GetValue(FObjeto).AsVariant;
+
+        // Encontra o componente relacionado, como, por exemplo, "edtNome"
+        Componente := FFormulario.FindComponent(Format('edt%s',[Propriedade.Name]));
+
+        // Testa se o componente é da classe "TEdit" para acessar a propriedade "Text"
+        if Componente is TEdit then
+           if (UpperCase(Propriedade.PropertyType.ToString) = 'CURRENCY') or
+              (UpperCase(Propriedade.PropertyType.ToString) = 'DOUBLE') then
+              (Componente as TEdit).Text := FormatFloat('#,##0.00', Valor)
+           else
+              (Componente as TEdit).Text := Valor;
+
+        // Testa se o componente é da classe "TMemo" para acessar a propriedade "Lines"
+        if (Componente is TMemo) then
+           (Componente as TMemo).Lines.Add(Valor);
+
+        // Testa se o componente é da classe "TComboBox" para acessar a propriedade "ItemIndex"
+        if Componente is TComboBox then
+           if (UpperCase(Propriedade.PropertyType.ToString) = 'INTEGER') then
+              (Componente as TComboBox).ItemIndex := Valor - 1
+           else
+              (Componente as TComboBox).ItemIndex := (Componente as TComboBox).Items.IndexOf(Valor);
+
+        // Testa se o componente é da classe "TRadioGroup" para acessar a propriedade "ItemIndex"
+        if Componente is TRadioGroup then
+          (Componente as TRadioGroup).ItemIndex := (Componente as TRadioGroup).Items.IndexOf(Valor);
+
+        // Testa se o componente é da classe "TCheckBox" para acessar a propriedade "Checked"
+        if Componente is TCheckBox then
+          (Componente as TCheckBox).Checked := Valor;
+
+        // Testa se o componente é da classe "TTrackBar" para acessar a propriedade "Position"
+        if Componente is TTrackBar then
+          (Componente as TTrackBar).Position := Valor;
+
+        // Testa se o componente é da classe "TDateTimePicker" para acessar a propriedade "Date"
+        if Componente is TDateTimePicker then
+          (Componente as TDateTimePicker).Date := VarToDateTime(Valor);
+
+        // Testa se o componente é da classe "TShape" para acessar a propriedade "Brush.Color"
+        if Componente is TShape then
+          (Componente as TShape).Brush.Color := Valor;
+      end;
+  finally
+      begin
+        Contexto.Free;
+      end;
+  end;
+end;
+
+//####################################################################################################################
+// Função   : Form_To_Classe()
+// Objetivo : Responsável Pela Colocação dos Dados do Form em Uma Classe
+//####################################################################################################################
+function TClasses.Form_To_Classe: TClasses;
+var
+  Contexto: TRttiContext;
+  Tipo: TRttiType;
+  Propriedade: TRttiProperty;
+  Valor: variant;
+  Componente: TComponent;
+  lAtribuir: Boolean;
+
+begin
+  Result := Self;
+
+  // Cria o contexto do RTTI
+  Contexto := TRttiContext.Create;
+
+  // Obtém as informações de RTTI da classe
+  Tipo := Contexto.GetType(FObjeto.ClassInfo);
+
+  try
+    // Executa um loop nas propriedades do objeto
+    for Propriedade in Tipo.GetProperties do
+      begin
+        lAtribuir := False;
+
+        // Encontra o componente relacionado, como, por exemplo, "edtNome"
+        Componente := FFormulario.FindComponent(Format('edt%s',[Propriedade.Name]));
+
+        // Testa se o componente é da classe "TEdit" para acessar a propriedade "Text"
+        if Componente is TEdit then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TEdit).Text;
+           end;
+
+        // Testa se o componente é da classe "TLabel" para acessar a propriedade "Text"
+        if Componente is TLabel then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TLabel).Caption;
+           end;
+
+        // Testa se o componente é da classe "TEdit" para acessar a propriedade "Text"
+        if Componente is TDateTimePicker then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TDateTimePicker).Date;
+           end;
+
+        // Testa se o componente é da classe "TComboBox" para acessar a propriedade "Text"
+        if Componente is TComboBox then
+           begin
+             lAtribuir := True;
+             if (UpperCase(Propriedade.PropertyType.ToString) = 'INTEGER') then
+                 Valor := (Componente as TComboBox).ItemIndex + 1
+              else
+                 Valor := (Componente as TComboBox).Text;
+           end;
+
+        // Testa se o componente é da classe "TMemo" para acessar a propriedade "Lines"
+        if (Componente is TMemo) then
+           begin
+             lAtribuir := True;
+             Valor := WideCharToString((Componente as TMemo).Lines.GetText);
+           end;
+
+        // Testa se o componente é da classe "TRadioGroup" para acessar a propriedade "Items[ItemIndex]"
+        if Componente is TRadioGroup then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TRadioGroup).Items[(Componente as TRadioGroup).ItemIndex];
+           end;
+
+        // Testa se o componente é da classe "TCheckBox" para acessar a propriedade "Checked"
+        if Componente is TCheckBox then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TCheckBox).Checked;
+           end;
+
+        // Testa se o componente é da classe "TTrackBar" para acessar a propriedade "Position"
+        if Componente is TTrackBar then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TTrackBar).Position;
+           end;
+
+        // Testa se o componente é da classe "TDateTimePicker" para acessar a propriedade "Date"
+        if Componente is TDateTimePicker then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TDateTimePicker).Date;
+           end;
+
+        // Testa se o componente é da classe "TShape" para acessar a propriedade "Brush.Color"
+        if Componente is TShape then
+           begin
+             lAtribuir := True;
+             Valor := (Componente as TShape).Brush.Color;
+           end;
+
+      if lAtribuir then
+           if (UpperCase(Propriedade.PropertyType.ToString) = 'INTEGER') then
+              Propriedade.SetValue(FObjeto, TValue.FromVariant(StrToInt(Valor)))
+           else if (UpperCase(Propriedade.PropertyType.ToString) = 'CURRENCY') or
+                   (UpperCase(Propriedade.PropertyType.ToString) = 'DOUBLE') then
+              if (VarToStr(Valor) = '0') or
+                 (VarToStr(Valor) = '0,00') then
+                 Propriedade.SetValue(FObjeto, TValue.FromVariant(StrToFloat('0,00')))
+              else
+                 Propriedade.SetValue(FObjeto, TValue.FromVariant(StrToFloat(FormatFloat('#.##', StrToFloat(ToStr(Valor).Replace('.',''))))))
+           else if (UpperCase(Propriedade.PropertyType.ToString) = 'TDATETIME') then
+              Propriedade.SetValue(FObjeto, TValue.FromVariant(StrToDate(DateToStr(Valor))))
+           else
+              begin
+                if Componente is TDateTimePicker then
+                   Propriedade.SetValue(FObjeto, TValue.FromVariant(DateToStr((Componente as TDateTimePicker).Date)))
+                else
+                   Propriedade.SetValue(FObjeto, TValue.FromVariant(Valor));
+              end;
+      end;
+  finally
+      begin
+        Contexto.Free;
+      end;
+  end;
+end;
+
+end.

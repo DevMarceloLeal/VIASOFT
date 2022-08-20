@@ -1,0 +1,46 @@
+unit View.Frame.Saldo;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Controller.Observer.Interfaces,
+  Auxiliar.Variaveis.Globais;
+
+type
+  { Concrete Observer }
+  TFrameSaldo = class(TFrame, IObserver)
+    LabelTitulo: TLabel;
+    LabelSaldo: TLabel;
+    LabelTotalGeral: TLabel;
+  private
+    FTotalGeral: Real;
+  public
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+{ TFrameSaldo }
+
+procedure TFrameSaldo.Atualizar(Notificacao: TNotificacao);
+begin
+  FTotalGeral := FTotalGeral + Notificacao.Valor;
+
+  // Exibe os valores nos componentes TLabel
+  LabelValorSaldo.Caption := FormatFloat('###,##0.00', FTotalGeral);
+end;
+
+end.

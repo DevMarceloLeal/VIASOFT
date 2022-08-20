@@ -1,0 +1,117 @@
+object FrameSaldo: TFrameSaldo
+  Left = 0
+  Top = 0
+  Width = 300
+  Height = 110
+  TabOrder = 0
+  PixelsPerInch = 96
+  object LabelTitulo: TLabel
+    Left = 0
+    Top = 0
+    Width = 300
+    Height = 21
+    Align = alTop
+    Alignment = taCenter
+    Caption = 'Balan'#231'o Financeiro'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Segoe UI'
+    Font.Style = [fsBold, fsItalic]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+    StyleElements = [seClient, seBorder]
+    ExplicitWidth = 140
+  end
+  object LabelCreditos: TLabel
+    Left = 6
+    Top = 35
+    Width = 135
+    Height = 16
+    Caption = 'Centro de Custos Pai'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clGreen
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+    StyleElements = [seClient, seBorder]
+  end
+  object LabelDebitos: TLabel
+    Left = 6
+    Top = 55
+    Width = 149
+    Height = 16
+    Caption = 'Centro de Custos Filho:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clPurple
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+    StyleElements = [seClient, seBorder]
+  end
+  object LabelSaldo: TLabel
+    Left = 6
+    Top = 76
+    Width = 74
+    Height = 16
+    Caption = 'Total Geral:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+  end
+  object LabelValorFilho: TLabel
+    Left = 261
+    Top = 55
+    Width = 28
+    Height = 16
+    Alignment = taRightJustify
+    Caption = '0,00'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clPurple
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+    StyleElements = [seClient, seBorder]
+  end
+  object LabelValorPai: TLabel
+    Left = 261
+    Top = 35
+    Width = 28
+    Height = 16
+    Alignment = taRightJustify
+    Caption = '0,00'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clGreen
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+    StyleElements = [seClient, seBorder]
+  end
+  object LabelValorSaldo: TLabel
+    Left = 261
+    Top = 76
+    Width = 28
+    Height = 16
+    Alignment = taRightJustify
+    Caption = '0,00'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+  end
+end

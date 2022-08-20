@@ -1,0 +1,55 @@
+unit View.Frame.Log;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Controller.Interfaces,
+  Model.Logs,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TFrameLog = class(TFrame, iObserver)
+    MemoLog: TMemo;
+    LabelTitulo: TLabel;
+  private
+    FControle: TModelLogs;
+  public
+    constructor Create(AOwner: TComponent) ; override;
+    destructor Destroy; override;
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+{ TFrameLog }
+
+constructor TFrameLog.Create(AOwner: TComponent);
+begin
+  inherited;
+  FControle := TModelLogs.New;
+end;
+
+destructor TFrameLog.Destroy;
+begin
+  inherited;
+end;
+
+procedure TFrameLog.Atualizar(Notificacao: TNotificacao);
+begin
+  MemoLog.Lines.Add(FControle.EfetuarLncamentos(Notificacao));
+end;
+
+end.

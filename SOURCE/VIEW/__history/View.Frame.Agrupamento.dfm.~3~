@@ -1,0 +1,137 @@
+object FrameAgrupamento: TFrameAgrupamento
+  Left = 0
+  Top = 0
+  Width = 611
+  Height = 348
+  TabOrder = 0
+  PixelsPerInch = 96
+  object LabelCreditos: TLabel
+    Left = 23
+    Top = 7
+    Width = 137
+    Height = 16
+    Caption = 'Centro de Custos Pai'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clGreen
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+  end
+  object LabelDebitos: TLabel
+    Left = 289
+    Top = 5
+    Width = 153
+    Height = 16
+    Caption = 'Centro de Custos Filho:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clPurple
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    Font.Quality = fqClearTypeNatural
+    ParentFont = False
+  end
+  object dbgPai: TDBGrid
+    Left = 16
+    Top = 27
+    Width = 265
+    Height = 208
+    DataSource = dtsPai
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = 'Segoe UI'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'CentroCustos'
+        Title.Alignment = taCenter
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor'
+        Title.Alignment = taCenter
+        Width = 80
+        Visible = True
+      end>
+  end
+  object dbgFilho: TDBGrid
+    Left = 287
+    Top = 27
+    Width = 265
+    Height = 208
+    DataSource = dtsPai
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = 'Segoe UI'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'CentroCustos'
+        Title.Alignment = taCenter
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'Valor'
+        Title.Alignment = taCenter
+        Width = 80
+        Visible = True
+      end>
+  end
+  object cdsPai: TClientDataSet
+    PersistDataPacket.Data = {
+      460000009619E0BD010000001800000002000000000003000000460009436174
+      65676F726961010049000000010005574944544802000200140005546F74616C
+      08000400000000000000}
+    Active = True
+    Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'Categoria'
+        DataType = ftString
+        Size = 20
+      end
+      item
+        Name = 'Total'
+        DataType = ftFloat
+      end>
+    IndexDefs = <
+      item
+        Name = 'IndexTotal'
+        DescFields = 'Total'
+        Fields = 'Total'
+        Options = [ixDescending]
+      end>
+    IndexName = 'IndexTotal'
+    Params = <>
+    StoreDefs = True
+    Left = 48
+    Top = 144
+    object ClientDataSetCategoria: TStringField
+      FieldName = 'Categoria'
+    end
+    object ClientDataSetTotal: TFloatField
+      FieldName = 'Total'
+      DisplayFormat = ',0.00'
+      EditFormat = ',0.00'
+    end
+  end
+  object dtsPai: TDataSource
+    DataSet = cdsPai
+    Left = 97
+    Top = 144
+  end
+end

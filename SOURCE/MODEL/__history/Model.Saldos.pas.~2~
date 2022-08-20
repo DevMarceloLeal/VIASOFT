@@ -1,0 +1,41 @@
+unit Model.Saldos;
+
+interface
+
+uses
+  System.SysUtils,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TModelSaldos = class
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: TModelSaldos;
+    function EfetuarLancamentos(Notificacao: TNotificacao): String;
+  end;
+
+implementation
+
+{ TModelSaldos }
+
+constructor TModelSaldos.Create;
+begin
+end;
+
+destructor TModelSaldos.Destroy;
+begin
+  inherited;
+end;
+
+class function TModelSaldos.New: TModelSaldos;
+begin
+  Result := Self.Create;
+end;
+
+function TModelSaldos.EfetuarLancamentos(Notificacao: TNotificacao): String;
+begin
+  Result := Format('Um Centro de Custo %s no VALOR DE %s foi adicionado', [Notificacao.CentroCustos, FormatFloat('###,##0.00', Notificacao.Valor)]);
+end;
+
+end.

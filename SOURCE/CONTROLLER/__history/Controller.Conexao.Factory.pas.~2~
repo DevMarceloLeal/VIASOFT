@@ -1,0 +1,50 @@
+unit Controller.Conexao.Factory;
+
+interface
+
+uses
+  Controller.Conexao.Interfaces,
+  Model.Conexao.Interfaces,
+  Model.Conexao.Factory,
+  Model.Conexao.Observer.Interfaces,
+  Model.Conexao.Observer.Factory;
+
+type
+  TControllerConexao = class(TInterfacedObject, iControllerConexao)
+  private
+    FConexao: iModelConexaoFactory;
+    FObserver: iSubjectConexao;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iControllerConexao;
+    function Conexao: iModelConexaoFactory;
+  end;
+
+implementation
+
+{ TControllerConexao }
+
+constructor TControllerConexao.Create;
+begin
+  FObserver := TObserverConexao.New;
+  FConexao := TModelConexaoFactory.New.Driver.Observer(FObserver);
+end;
+
+destructor TControllerConexao.Destroy;
+begin
+  inherited;
+end;
+
+class function TControllerConexao.New: iControllerConexao;
+begin
+  Result := Self.Create;
+end;
+
+function TControllerConexao.Conexao: iModelConexaoFactory;
+begin
+  Result := FConexao;
+end;
+
+end.
+

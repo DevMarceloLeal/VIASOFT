@@ -1,0 +1,76 @@
+unit Controller.Pesquisas.Factory;
+
+interface
+
+uses
+  Controller.Pesquisas.Interfaces,
+  Model.Pesquisas.CEP;
+
+type
+  TControlePesquisas = class(TInterfacedObject, iControlePesquisas)
+  private
+    FPesquisasValidacao: iPesquisasValidacao;
+    FPesquisasEmpresas: iPesquisasEmpresas;
+    FPesquisasPlanoContas: iPesquisasPlanoContas;
+    FPesquisasCNPJ: iPesquisasCNPJ;
+    FPesquisasCEP: iPesquisasCEP;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iControlePesquisas;
+    function Validacao: iPesquisasValidacao;
+    function Empresas: iPesquisasEmpresas;
+    function PlanoContas: iPesquisasPlanoContas;
+    function CNPJ: iPesquisasCNPJ;
+    function CEP: iPesquisasCEP;
+  end;
+
+implementation
+
+{ TControlePesquisas }
+
+constructor TControlePesquisas.Create;
+begin
+//  FPesquisasValidacao := TPesquisasValidacao.New;
+//  FPesquisasEmpresas := TPesquisasEmpresas.New;
+//  FPesquisasPlanoContas := TPesquisasPlanoContas.New;
+//  FPesquisasCNPJ := TPesquisasCNPJ.New;
+  FPesquisasCEP := TPesquisasCEP.New;
+end;
+
+destructor TControlePesquisas.Destroy;
+begin
+  inherited;
+end;
+
+class function TControlePesquisas.New: iControlePesquisas;
+begin
+  Result := Self.Create;
+end;
+
+function TControlePesquisas.Empresas: iPesquisasEmpresas;
+begin
+  Result := FPesquisasEmpresas;
+end;
+
+function TControlePesquisas.PlanoContas: iPesquisasPlanoContas;
+begin
+  Result := FPesquisasPlanoContas;
+end;
+
+function TControlePesquisas.Validacao: iPesquisasValidacao;
+begin
+  Result := FPesquisasValidacao;
+end;
+
+function TControlePesquisas.CNPJ: iPesquisasCNPJ;
+begin
+  Result := FPesquisasCNPJ;
+end;
+
+function TControlePesquisas.CEP: iPesquisasCEP;
+begin
+  Result := FPesquisasCEP;
+end;
+
+end.

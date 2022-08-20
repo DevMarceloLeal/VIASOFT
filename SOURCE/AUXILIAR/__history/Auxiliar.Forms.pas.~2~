@@ -1,0 +1,98 @@
+unit Auxiliar.Forms;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Classes,
+  Vcl.Forms,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Controls,
+  Vcl.Graphics,
+  Vcl.Buttons,
+  Vcl.DBGrids;
+
+  procedure Limpar_Edits(pFrm: TForm);
+  procedure Foco_Componente(pFrm: TForm; pNomeComponente: String);
+  function Componente_Valor(pFrm: TForm; pNomeComponente: String; pTexto: String = ''; pZerar: Boolean = False): String;
+implementation
+
+uses
+  Vcl.ComCtrls;
+
+///####################################################################################################################
+/// Função   : Limpar_Edits()
+/// Objetivo : Responsável Pela Limpeza dos Edit´s no Form
+///####################################################################################################################
+procedure Limpar_Edits(pFrm: TForm);
+var
+  i: Integer;
+
+begin
+  for i := pFrm.ComponentCount - 1 downto 0 do
+    begin
+      if (pFrm.Components[i] is TCustomEdit) then
+         (pFrm.Components[i] as TCustomEdit).Clear
+      else if (pFrm.Components[i] is TLabel) and (String((pFrm.Components[i] as TLabel).Name).Contains('edt')) then
+         (pFrm.Components[i] as TLabel).Caption := '';
+    end;
+end;
+
+///####################################################################################################################
+/// Função   : Foco_Componente()
+/// Objetivo : Responsável Pela Mudança de Comportamento do Componente
+///####################################################################################################################
+procedure Foco_Componente(pFrm: TForm; pNomeComponente: String);
+var
+  Componente: TComponent;
+
+begin
+  Componente := pFrm.FindComponent(pNomeComponente);
+  if (Componente is TCustomButton) then
+     begin
+       TCustomButton(Componente).SetFocus;
+     end
+  else if (Componente is TCustomEdit) then
+     begin
+       TEdit(Componente).SetFocus;
+     end
+  else if (Componente is TDBGrid) then
+     begin
+       TDBGrid(Componente).SetFocus;
+     end
+  else if (Componente is TDateTimePicker) then
+     begin
+       TDateTimePicker(Componente).SetFocus;
+     end
+  else if (Componente is TComboBox) then
+     begin
+       TComboBox(Componente).SetFocus;
+     end;
+end;
+
+///####################################################################################################################
+/// Função   : Componente_Valor()
+/// Objetivo : Responsável Por Preencher ou Recuperar Valores de Componentes
+///####################################################################################################################
+function Componente_Valor(pFrm: TForm; pNomeComponente: String; pTexto: String = ''; pZerar: Boolean = False): String;
+var
+  Componente: TComponent;
+
+begin
+  Componente := pFrm.FindComponent(pNomeComponente);
+  if (Componente is TEdit) then
+     begin
+       if (pTexto <> '') or (pZerar) then
+         (Componente as TEdit).Text := pTexto;
+       Result := (Componente as TEdit).Text
+     end
+  else if (Componente is TLabel) then
+     begin
+       if (pTexto <> '') or (pZerar) then
+          (Componente as TLabel).Caption := pTexto;
+       Result := (Componente as TLabel).Caption;
+     end;
+end;
+
+end.

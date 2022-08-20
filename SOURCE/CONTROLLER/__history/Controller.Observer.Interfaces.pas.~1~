@@ -1,0 +1,21 @@
+unit Controller.Observer.Interfaces;
+
+interface
+
+uses
+  Model.Notificacao;
+
+type
+  IObserver = interface
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+  ISubject = interface
+    procedure AdicionarObserver(Observer: IObserver);
+    procedure RemoverObserver(Observer: IObserver);
+    procedure Notificar;
+  end;
+
+implementation
+
+end.

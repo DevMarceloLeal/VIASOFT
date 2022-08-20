@@ -1,0 +1,114 @@
+unit Model.Agrupamento;
+
+interface
+uses
+  System.SysUtils,
+  Vcl.Forms,
+  Vcl.DBGrids,
+  Data.DB,
+  Datasnap.DBClient,
+  Auxiliar.Forms,
+  Auxiliar.Dialogos,
+  Auxiliar.Variaveis.Globais,
+  Controller.Interfaces;
+
+type
+  iAgrupamento = interface
+    ['{B50F7CE9-CDA1-46AF-ACCB-F12062756C56}']
+    function Formulario(pFrame: TFrame): iAgrupamento;
+    function Dados: iAgrupamento;
+    procedure EfetuarLancamentos;
+  end;
+
+  TModelAgrupamento = class(TInterfacedObject, iAgrupamento)
+  private
+    FFrame: TFrame;
+    FDBGridPai, FDBGridFilho: TDBGrid;
+    FCdsPai, FCdsFilho: TClientDataSet;
+    FDtsPai, FDtsFilho: TDataSource;
+    function CriaTabela: TClientDataSet;
+    function CriaDataSource(pCdsData: TClientDataSet): TDataSource;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iAgrupamento;
+    function Formulario(pFrame: TFrame): iAgrupamento;
+    function Dados: iAgrupamento;
+    procedure EfetuarLancamentos;
+  end;
+
+const
+  // Configuração do DBGrid
+  aFields  : array[0..1] of String     = ('CENTROCUSTOS', 'VALOR');
+  aHeaders : array[0..1] of String     = ('Código', 'Valor R$');
+  aWidths  : array[0..1] of Integer    = ( 70, 100);
+  aAligns  : array[0..1] of String     = ('Center', 'Right');
+  aTipos   : array[0..1] of TFieldType = (ftString, ftFloat);
+  aTamanho : array[0..1] of Integer    = ( 6, 0);
+
+implementation
+
+{ TModelAgrupamento }
+
+constructor TModelAgrupamento.Create;
+begin
+  FCdsPai   := CriaTabela;
+  FCdsFilho := CriaTabela;
+
+  FDtsPai   := CriaDataSource(FCdsPai);
+  FDtsFilho := CriaDataSource(FCdsFilho);
+end;
+
+destructor TModelAgrupamento.Destroy;
+begin
+  inherited;
+end;
+
+function TModelAgrupamento.CriaTabela: TClientDataSet;
+var
+  cdsData: TClientDataSet;
+  I: Integer;
+
+begin
+  cdsData := TClientDataSet.Create(nil);
+  for I := 0 to Length(aFields) - 1 do
+    cdsData.FieldDefs.Add(aFields[I], aTipos[I], aTamanho[I]);
+
+  cdsData.CreateDataSet;
+  cdsData.EmptyDataSet;
+  Result := cdsData;
+end;
+
+function TModelAgrupamento.CriaDataSource(pCdsData: TClientDataSet): TDataSource;
+var
+  dtsData: TDataSource;
+
+begin
+  dtsData         := TDataSource.Create(nil);
+  dtsData.DataSet := pCdsData;
+end;
+
+
+class function TModelAgrupamento.New: iAgrupamento;
+begin
+  Result := Self.Create;
+end;
+
+function TModelAgrupamento.Formulario(pFrame: TFrame): iAgrupamento;
+begin
+  Result       := Self;
+  FFrame       := pFrame;
+  FDBGridPai   := TDBGrid(Componente(FFrame, 40));
+  FDBGridFilho := TDBGrid(Componente(FFrame, 41));
+end;
+
+function TModelAgrupamento.Dados: iAgrupamento;
+begin
+  Result := Self;
+end;
+
+procedure TModelAgrupamento.EfetuarLancamentos;
+begin
+end;
+
+end.

@@ -1,0 +1,64 @@
+unit Model.Observer;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Generics.Collections,
+  Vcl.Dialogs,
+  Controller.Observer.Interfaces,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TObserver = class(TInterfacedObject, iSubject)
+  private
+    FObservers: TList<iObserver>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iSubject;
+    procedure Adicionar(Observer: iObserver);
+    procedure Remover(Observer: iObserver);
+    procedure Notificar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+{ TObserver }
+
+constructor TObserver.Create;
+begin
+  FObservers := TList<iObserver>.Create;
+end;
+
+destructor TObserver.Destroy;
+begin
+  FObservers.Free;
+  inherited;
+end;
+
+class function TObserver.New: iSubject;
+begin
+  Result := Self.Create;
+end;
+
+procedure TObserver.Adicionar(Observer: iObserver);
+begin
+  FObservers.Add(Observer);
+end;
+
+procedure TObserver.Remover(Observer: iObserver);
+begin
+  FObservers.Delete(FObservers.IndexOf(Observer));
+end;
+
+procedure TObserver.Notificar(Notificacao: TNotificacao);
+var
+  Observer: iObserver;
+
+begin
+  for Observer in FObservers do
+    Observer.Atualizar(Notificacao);
+end;
+
+end.

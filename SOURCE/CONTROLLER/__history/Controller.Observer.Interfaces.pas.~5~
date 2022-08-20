@@ -1,0 +1,21 @@
+unit Controller.Observer.Interfaces;
+
+interface
+
+uses
+  Auxiliar.Variaveis.Globais;
+
+type
+  iObserver = interface
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+  iSubject = interface
+    procedure Adicionar(Observer: iObserver);
+    procedure Remover(Observer: iObserver);
+    procedure Notificar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+end.

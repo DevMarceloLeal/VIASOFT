@@ -1,0 +1,81 @@
+unit Controller.Pesquisas.Interfaces;
+
+interface
+
+uses
+  System.Classes,
+  Auxiliar.Variaveis.Globais;
+
+type
+  iPesquisasValidacao = interface
+    ['{FAE10BF6-261C-45E9-8DE9-98FCC2A589D6}']
+    function Tabela(pTabela: String): iPesquisasValidacao;
+    function ApelidoCampo(pApelidoCampo: String): iPesquisasValidacao;
+    function Campo(pCampo: String): iPesquisasValidacao;
+    function TagCampo(pTagCampo: Integer): iPesquisasValidacao;
+    function Texto(pTexto: String): iPesquisasValidacao;
+    function Retorno(pCampoRetorno: String): iPesquisasValidacao;
+    procedure Executar;
+  end;
+
+  iPesquisasEmpresas = interface
+    ['{B35AE117-D7F2-4FAC-9B97-2E8591CBFF64}']
+    function Codigo: Integer;
+    function RazaoSocial: String;
+    function NomeFantasia: String;
+    function Endereco: String;
+    function Lista: TStringList;
+  end;
+
+  iPesquisasPlanoContas = interface
+    ['{3996A36A-4D0A-462E-8158-8D74616E5393}']
+    function Codigo(Value: String): iPesquisasPlanoContas; overload;
+    function Codigo: String; overload;
+    function Nome(Value: String): iPesquisasPlanoContas; overload;
+    function Nome: String; overload;
+    function Escolher: String;
+    function Sintetica: Boolean;
+  end;
+
+  iPesquisasCNPJ = interface
+    ['{BB09BDDA-7CBF-4F4C-8FAF-DBA38F9CE1F8}']
+    function BuscarInformacoes(NumeroCNPJ: String): iPesquisasCNPJ;
+    function NumeroCNPJ: String;
+    function RazaoSocial: String;
+    function NomeFantasia: String;
+    function DataAbertura: String;
+    function Logradouro: String;
+    function Numero: String;
+    function Complemento: String;
+    function Bairro: String;
+    function Cidade: String;
+    function Estado: String;
+    function Cep: String;
+    function Telefone: String;
+    function CNAE: String;
+    function Email: String;
+  end;
+
+  iPesquisasCEP = interface
+    ['{5E38A3A8-0657-4401-8173-C28F94747E4F}']
+    function BuscarInformacoes(NumeroCEP: String): iPesquisasCEP;
+    function NumeroCEP: String;
+    function Logradouro: String;
+    function Complemento: String;
+    function Bairro: String;
+    function Cidade: String;
+    function Estado: String;
+  end;
+
+  iControlePesquisas = interface
+    ['{12BC26F4-C619-4071-BE64-6FCB09C76B1B}']
+    function Validacao: iPesquisasValidacao;
+    function Empresas: iPesquisasEmpresas;
+    function PlanoContas: iPesquisasPlanoContas;
+    function CNPJ: iPesquisasCNPJ;
+    function Cep: iPesquisasCEP;
+  end;
+
+implementation
+
+end.

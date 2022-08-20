@@ -1,0 +1,97 @@
+unit View.Frame.Operacoes;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.Variants,
+  System.Classes,
+  System.Generics.Collections,
+  System.SysUtils,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Buttons,
+  Vcl.ExtCtrls,
+  Data.DB,
+  Datasnap.DBClient,
+  Controller.Interfaces,
+  Controller.Factory,
+  Auxiliar.Forms,
+  Auxiliar.Dialogos,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TFrameCadastroOperacoes = class(TFrame)
+    edtValor: TEdit;
+    lblCentroCustos: TLabel;
+    lblValor: TLabel;
+    edtCentroCustos: TEdit;
+    btnLancar: TBitBtn;
+    btnSair: TBitBtn;
+    procedure edtValorExit(Sender: TObject);
+    procedure edtValorKeyPress(Sender: TObject; var Key: Char);
+    procedure btnLancarClick(Sender: TObject);
+    procedure btnSairClick(Sender: TObject);
+  private
+    FControle: iController;
+  public
+    constructor Create(AOwner: TComponent) ; override;
+    destructor Destroy; override;
+  end;
+
+implementation
+
+
+{$R *.dfm}
+
+{ TFrameCadastroOperacoes }
+
+constructor TFrameCadastroOperacoes.Create(AOwner: TComponent);
+begin
+  inherited;
+  FControle           := TController.New;
+  edtValor.OnExit     := edtValorExit;
+  edtValor.OnKeyPress := edtValorKeyPress;
+  btnLancar.Hint      := 'Para efetuar o lançamento do centro de custo';
+  btnSair.Hint        := 'Encerra o sistema e retorna ao windows';
+  btnLancar.OnClick   := btnLancarClick;
+  btnSair.OnClick     := btnSairClick;
+end;
+
+destructor TFrameCadastroOperacoes.Destroy;
+begin
+  inherited;
+end;
+
+procedure TFrameCadastroOperacoes.edtValorExit(Sender: TObject);
+begin
+  if TEdit(Sender).Text <> '' then
+     TEdit(Sender).Text := FormatFloat('###,##0.00', StrToFloat(TEdit(Sender).Text))
+  else
+     TEdit(Sender).Text := '0,00';
+end;
+
+procedure TFrameCadastroOperacoes.edtValorKeyPress(Sender: TObject; var Key: Char);
+begin
+  // Evita a digitação de letras e pontos no campo de valor
+  if not (CharInSet(Key, ['0'..'9', #8, #44])) then
+     Key := #0;
+end;
+
+procedure TFrameCadastroOperacoes.btnLancarClick(Sender: TObject);
+begin
+  FControle.Operacoes.Formulario(Self).EfetuarLancamentos;
+end;
+
+procedure TFrameCadastroOperacoes.btnSairClick(Sender: TObject);
+begin
+  keybd_event(VK_ESCAPE, 0, 0, 0);
+end;
+
+end.

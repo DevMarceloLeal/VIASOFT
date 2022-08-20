@@ -1,0 +1,13 @@
+unit Auxiliar.Variaveis.Globais;
+
+interface
+
+type
+  TNotificacao = record
+    CentroCustos: string;
+    Valor: real;
+  end;
+
+implementation
+
+end.

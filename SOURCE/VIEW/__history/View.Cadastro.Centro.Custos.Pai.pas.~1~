@@ -1,0 +1,148 @@
+unit View.Cadastro.Centro.Custos.Pai;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+  System.Actions,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Data.DB,
+  Datasnap.DBClient,
+  Vcl.ActnList,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.DBCtrls,
+  Vcl.Buttons,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Vcl.ImgList,
+  Vcl.ImageCollection,
+  Vcl.Imaging.pngimage,
+  Vcl.VirtualImageList,
+  Vcl.BaseImageCollection,
+  View.Cadastro.Padrao,
+//  Controller.Interfaces,
+//  Controller.Factory,
+//  Auxiliar.Arrays,
+  Auxiliar.Helpers,
+  Auxiliar.Dialogos,
+//  Auxiliar.Validacoes,
+//  Auxiliar.Formatacoes,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TfrmCentroCustosPai = class(TfrmBaseCadastros)
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+  private
+//    FControle: iController;
+    lInicio: Boolean;
+  public
+    procedure Carregar_Janela; override;
+    procedure Executar_Operacao; override;
+    procedure Buscar_Registros; override;
+    procedure Imprimir_Listagem; override;
+  end;
+
+var
+  frmCentroCustosPai: TfrmCentroCustosPai;
+
+implementation
+
+{$R *.dfm}
+
+//###########################################################################
+// EVENTOS NATIVOS DO FORM
+//###########################################################################
+procedure TfrmCentroCustosPai.FormCreate(Sender: TObject);
+begin
+  inherited;
+//  FControle := TController.New;
+
+// Aqui cria a tabela caso ela não exista, carrega os registros
+// e Monta a GRID de dados
+//  FControle.XXXXX.Formulario(Self).Carregar_Janela_Consulta;
+  lInicio := True;
+end;
+
+procedure TfrmCentroCustosPai.FormShow(Sender: TObject);
+begin
+  inherited;
+  if lInicio then
+     begin
+       lInicio := False;
+       Preencher_Cbx_Filtros;
+     end;
+end;
+
+//###########################################################################
+// CHANGE´S DOS TEDIT´S
+//###########################################################################
+// Colocar Aqui Todos os Changes do Form
+
+//###########################################################################
+// VALID´S DOS TEDIT´S
+//###########################################################################
+// Colocar Aqui Todos as Validações do Form
+
+//###########################################################################
+// FUNÇÕES DE AUXÍLIO DO FORM
+//###########################################################################
+procedure TfrmCentroCustosPai.Carregar_Janela;
+begin
+  inherited;
+  try
+
+// Monta a janela de inclusão/edição/exclusão de registros
+//    FControle.XXXXXX.Formulario(Self).Operacao(FOperacao).Carregar_Janela_Manutencao;
+
+  except on E: Exception do
+    raise Exception.Create('A');
+  end;
+end;
+
+procedure TfrmCentroCustosPai.Executar_Operacao;
+begin
+  inherited;
+
+// Executa as operações de CRUD
+//  FControle.XXXXXX.Formulario(Self).Operacao(FOperacao).Executar_Operacoes;
+end;
+
+procedure TfrmCentroCustosPai.Buscar_Registros;
+begin
+  inherited;
+
+// Filtrar os registros
+//  FControle.XXXXXX.Formulario(Self).Filtrar_Registros;
+
+  dbgCadastro.SetFocus;
+end;
+
+procedure TfrmCentroCustosPai.Imprimir_Listagem;
+begin
+  inherited;
+
+// Imprime a listagem do cadastro
+//  FControle.XXXXXX.Formulario(Self).Listar_Registros;
+end;
+
+//###########################################################################
+// REGISTRO DA CLASSE NA APLICAÇÃO
+//###########################################################################
+initialization
+  RegisterClass(TfrmCentroCustosPai);
+
+finalization
+  UnRegisterClasses([TfrmCentroCustosPai]);
+
+end.

@@ -1,0 +1,121 @@
+unit View.Centro.Custos;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.Actions,
+  System.ImageList,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.VirtualImage,
+  Vcl.StdCtrls,
+  Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.ActnList,
+  Vcl.ImgList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Controller.Interfaces,
+  Controller.Factory,
+  Auxiliar.Dialogos,
+  Auxiliar.Teclado,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TfrmCentroCustos = class(TForm)
+    pnlCabecalho: TPanel;
+    lblTitulo: TLabel;
+    bhFormBase: TBalloonHint;
+    aclFormBase: TActionList;
+    actRetornar: TAction;
+    pnlTrabalho: TPanel;
+    pnlJanelaDados: TPanel;
+    pnlDBGrid: TPanel;
+    Image1: TImage;
+    dbgCCustosPai: TDBGrid;
+    pnlPesquisa: TPanel;
+    GroupBox1: TGroupBox;
+    img32: TImageList;
+    actSalvar: TAction;
+    imgFundoTrabalho: TImage;
+    btnRetornar: TSpeedButton;
+    Label1: TLabel;
+    edtCODIGO: TEdit;
+    edtVALOR: TEdit;
+    Label2: TLabel;
+    btnSalvar: TSpeedButton;
+    dbgCCustosFilho: TDBGrid;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Label7: TLabel;
+    Edit5: TEdit;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure actRetornarExecute(Sender: TObject);
+    procedure actSalvarExecute(Sender: TObject);
+  private
+    FTotalPai: Currency;
+    FTotalFilho: Currency;
+    FTotalGeral: Currency;
+    FControle: iController;
+  end;
+
+var
+  frmCentroCustos: TfrmCentroCustos;
+
+implementation
+
+uses
+  Datasnap.DBClient;
+
+{$R *.dfm}
+
+procedure TfrmCentroCustos.FormCreate(Sender: TObject);
+begin
+  FTotalPai   := 0.00;
+  FTotalFilho := 0.00;
+  FTotalGeral := 0.00;
+  FControle   := TController.New;
+  FControle.CentroCustos.Formulario(Self).Carregar_Janela_Consulta;
+end;
+
+procedure TfrmCentroCustos.FormShow(Sender: TObject);
+begin
+  pnlDBGrid.BringToFront;
+  edtCODIGO.SetFocus;
+end;
+
+procedure TfrmCentroCustos.actRetornarExecute(Sender: TObject);
+begin
+  Dec(gJanelas_Abertas);
+  Self.Destroy;
+end;
+
+procedure TfrmCentroCustos.actSalvarExecute(Sender: TObject);
+begin
+  try
+    // nbnbn
+  except on E: Exception do
+  end;
+end;
+
+initialization
+  RegisterClass(TfrmCentroCustos);
+
+finalization
+  UnRegisterClasses([TfrmCentroCustos]);
+
+end.

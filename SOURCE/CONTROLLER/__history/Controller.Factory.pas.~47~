@@ -1,0 +1,46 @@
+unit Controller.Factory;
+
+interface
+
+uses
+  Controller.Interfaces,
+  Controller.Observer.Interfaces,
+  Controller.Observer.Factory;
+
+type
+  TController = class(TInterfacedObject, iController)
+  private
+    FObserver: iSubject;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New : iController;
+    function Observer: iSubject;
+  end;
+
+implementation
+
+{ TController }
+
+constructor TController.Create;
+begin
+  FObserver   := TObserver.New;
+end;
+
+destructor TController.Destroy;
+begin
+  inherited;
+end;
+
+class function TController.New: iController;
+begin
+  Result := Self.Create;
+end;
+
+function TController.Observer: iSubject;
+begin
+  Result := FObserver;
+end;
+
+end.
+

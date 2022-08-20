@@ -1,0 +1,199 @@
+unit Model.Centro.Custos;
+
+interface
+
+uses
+  System.SysUtils,
+  Vcl.Forms,
+  Vcl.DBGrids,
+  Data.DB,
+  DBClient,
+  Controller.Interfaces,
+  Auxiliar.Forms,
+  Auxiliar.DataGrid,
+  Auxiliar.Dialogos,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TCCustosPai = class(TInterfacedObject, iModel)
+  private
+    FFormulario: TForm;
+    FOperacao: TOperacao;
+    FDBGrid: TDBGrid;
+    cdsCCustosPai: TClientDataSet;
+    dtsCCustosPai: TDataSource;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iModel;
+    function Formulario(pForm: TForm): iModel;
+    procedure Carregar_Janela_Consulta;
+    procedure Executar_Operacoes;
+  end;
+
+const
+  // Configuração do DBGrid
+  aFields  : array[0..1] of String  = ('CODIGO', 'VALOR');
+  aHeaders : array[0..1] of String  = ('Código', 'Valor R$');
+  aWidths  : array[0..1] of Integer = (150, 280);
+  aAligns  : array[0..1] of String  = ('Center', 'Right');
+
+implementation
+
+{ TCCustosPai }
+
+///####################################################################################################################
+/// Função   : Create()
+/// Objetivo : Responsável Por Criar uma Nova Instância da Classe
+///#################################################################################################################### (aLista: TStringList)
+constructor TCCustosPai.Create;
+begin
+  dtsCCustosPai := TDataSource.Create(nil);
+  cdsCCustosPai := TClientDataSet.Create(nil);
+  cdsCCustosPai.FieldDefs.Add('CODIGO', ftString, 6);
+  cdsCCustosPai.FieldDefs.Add('DESCRICAO', ftString, 60);
+  cdsCCustosPai.FieldDefs.Add('VALOR', ftFloat);
+
+  if not(cdsCCustosPai.Active) then
+     begin
+       cdsCCustosPai.CreateDataSet;
+       cdsCCustosPai.EmptyDataSet;
+       cdsCCustosPai.Active := true;
+       dtsCCustosPai.DataSet := cdsCCustosPai;
+     end;
+end;
+
+///####################################################################################################################
+/// Função   : Destroy()
+/// Objetivo : Responsável Por Destruir a Instância da Classe
+///#################################################################################################################### (aLista: TStringList)
+destructor TCCustosPai.Destroy;
+begin
+  inherited;
+  cdsCCustosPai.Close;
+end;
+
+///####################################################################################################################
+/// Função   : New()
+/// Objetivo : Função de Classe Para Criar a Instância da Classe
+///#################################################################################################################### (aLista: TStringList)
+class function TCCustosPai.New: iModel;
+begin
+  Result := Self.Create;
+end;
+
+///####################################################################################################################
+/// Função   : Formulario()
+/// Objetivo : Responsável Por Informar Qual Formulário q a Classe
+///            Irá Controlar
+///####################################################################################################################
+function TCCustosPai.Formulario(pForm: TForm): iModel;
+begin
+  Result := Self;
+  FFormulario := pForm;
+  FDBGrid     := TDBGrid(Form_Componente(FFormulario, 40));
+end;
+
+///####################################################################################################################
+/// Função   : Operacao()
+/// Objetivo : Informa a Classe Qual é a Operação de CRUD Ela Executará
+///####################################################################################################################
+function TCCustosPai.Operacao(pOperacao: TOperacao): iModel;
+begin
+  Result := Self;
+  FOperacao := pOperacao;
+end;
+
+///####################################################################################################################
+/// Função   : Carregar_Janela_Consulta()
+/// Objetivo : Carrega o Form de Consulta
+///#################################################################################################################### (aLista: TStringList)
+procedure TCCustosPai.Carregar_Janela_Consulta;
+begin
+  if cdsCCustosPai.RecordCount = 0 then
+     begin
+       // Preencher com registros padrão
+     end;
+
+  FDBGrid.DataSource := dtsCCustosPai;
+
+  Componente_Valor(FFormulario, 'lblTitulo', FTitulo);
+  MontarGrid(FDBGrid, aFields, aHeaders, aAligns, aWidths);
+  FormataDataSet(cdsCCustosPai);
+end;
+
+///####################################################################################################################
+/// Função   : Carregar_Janela_Manutencao()
+/// Objetivo : Carrega o Form de Manutenção de Registros
+///#################################################################################################################### (aLista: TStringList)
+procedure TCCustosPai.Carregar_Janela_Manutencao;
+begin
+  Limpar_Edits(FFormulario);
+  Foco_Componente(FFormulario, 'edtCODIGO');
+end;
+
+///####################################################################################################################
+/// Função   : Executar_Operacoes()
+/// Objetivo : Informa a Classe Qual é a Operação de CRUD Ela Executará
+///####################################################################################################################
+procedure TCCustosPai.Executar_Operacoes;
+var
+  FCODIGO, FDESCRICAO: String;
+  FVALOR: Currency;
+
+begin
+  FCODIGO    := Componente_Valor(FFormulario, 'edtCODIGO');
+  FDESCRICAO := Componente_Valor(FFormulario, 'edtDESCRICAO');
+  FVALOR     := 0.00;
+
+  case FOperacao of
+    opNovo, opAlterar:
+      begin
+        if FOperacao = opNovo then
+           begin
+             if cdsCCustosPai.Locate('CODIGO', FCODIGO, []) then
+                begin
+                  Msg('Este Centro de Custos Pai já foi adicionado !');
+                  Exit;
+                end
+             else
+                cdsCCustosPai.Insert;
+           end
+        else
+           begin
+             if cdsCCustosPai.FieldByName('DESCRICAO').AsString <> FDESCRICAO then
+                begin
+                  if cdsCCustosPai.Locate('DESCRICAO', FDESCRICAO, []) then
+                     begin
+                       Msg('Este Centro de Custos Pai já foi adicionado !');
+                       Exit;
+                     end;
+                end;
+
+             cdsCCustosPai.Edit;
+           end;
+
+        if cdsCCustosPai.State in (dsEditModes) then
+           begin
+             cdsCCustosPai.FieldByName('CODIGO').AsString    := FCODIGO;
+             cdsCCustosPai.FieldByName('DESCRICAO').AsString := FDESCRICAO;
+             cdsCCustosPai.FieldByName('VALOR').AsCurrency   := FVALOR;
+             cdsCCustosPai.Post;
+           end;
+      end;
+
+    opExcluir:
+      begin
+        if not cdsCCustosPai.Locate('CODIGO', FCODIGO, []) then
+           begin
+             Msg('Este Centro de Custos Pai não encontrado !');
+             Exit;
+           end
+        else
+           cdsCCustosPai.Delete;
+      end;
+  end;
+
+end;
+
+end.

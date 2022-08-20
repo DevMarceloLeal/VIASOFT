@@ -1,0 +1,195 @@
+unit View.Principal;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+  System.Actions,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ActnList,
+  Vcl.ExtCtrls,
+  Vcl.ImgList,
+  Vcl.WinXCtrls,
+  Vcl.Buttons,
+  Vcl.StdCtrls,
+  Vcl.Imaging.pngimage,
+  Vcl.Imaging.jpeg,
+  Auxiliar.Datas,
+  Auxiliar.Forms,
+  Auxiliar.Dialogos,
+  Auxiliar.Informacoes,
+  Auxiliar.Fundo.Esmaecido,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TfrmPrincipal = class(TForm)
+    pnlRodape: TPanel;
+    Image2: TImage;
+    lblHora: TLabel;
+    lblData: TLabel;
+    pnlCabecalho: TPanel;
+    Image3: TImage;
+    lblTitulo: TLabel;
+    btnFechar: TSpeedButton;
+    btnMinimizar: TSpeedButton;
+    imgIcone: TImage;
+    lblVersaoSistema: TLabel;
+    spvPrincipal: TSplitView;
+    Panel1: TPanel;
+    Image1: TImage;
+    btnSairSistema: TSpeedButton;
+    pnlPrincipal: TPanel;
+    imgInicio: TImage;
+    img16: TImageList;
+    btnCentroCustosPai: TSpeedButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormDestroy(Sender: TObject);
+  private
+    tmPrincipal: TTimer;
+    bhPrincipal: TBalloonHint;
+    procedure Posicao_Janela;
+    procedure tmPrincipalTimer(Sender: TObject);
+    procedure actFecharSistemaExecute(Sender: TObject);
+    procedure actCentroCustosPaiExecute(Sender: TObject);
+    procedure Image3MouseMove(Sender: TObject; Shift: TShiftState; X,Y: Integer);
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+  FFundo: TFundoEsmaecido;
+
+implementation
+
+{$R *.dfm}
+
+//###########################################################################
+// EVENTOS NATIVOS DO FORM
+//###########################################################################
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+  // Cria o fundo esmaecido
+  FFundo := TFundoEsmaecido.Create(nil);
+
+  // Cria o hint customizado em forma de balão
+  bhPrincipal := TBalloonHint.Create(nil);
+  bhPrincipal.Delay := 50;
+  bhPrincipal.Style := bhsBalloon;
+
+  // Cria o timer principal do sistema
+  tmPrincipal := TTimer.Create(nil);
+  tmPrincipal.OnTimer := tmPrincipalTimer;
+
+  // Cria o movimento da janela ao clicar sobre a imagem no topo
+  Image3.OnMouseMove := Image3MouseMove;
+
+  // Atribui o hint customizado ao form principal
+  CustomHint := bhPrincipal;
+
+  // Atribui as ações dos cliques dos botões
+  btnSairSistema.OnClick := actFecharSistemaExecute;
+  btnFechar.OnClick := actFecharSistemaExecute;
+end;
+
+procedure TfrmPrincipal.FormShow(Sender: TObject);
+begin
+  // Habilita o timer principal
+  tmPrincipal.Enabled := True;
+
+  // Carrega informações de versão do sistema
+  lblVersaoSistema.Caption := Versao_Sistema;
+
+  // Carrega informações de Data e Hora
+  lblData.Caption    := DataPorExtenso;
+  lblHora.Caption    := HoraStr;
+
+  // Carrega informações da posição e tamanho da janela principal
+  Posicao_Janela;
+end;
+
+procedure TfrmPrincipal.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  case Key of
+    Char(VK_ESCAPE):
+      begin
+        Key := #0;
+        Close;
+      end;
+
+    char(VK_RETURN):
+      begin
+        Key := #0;
+        keybd_event(VK_TAB, 0, 0, 0);
+      end;
+  end;
+end;
+
+procedure TfrmPrincipal.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose := Pergunta('Deseja Realmente Sair do Sistema ?');
+  if CanClose then
+     begin
+       ModalResult := mrCancel;
+     end
+end;
+
+procedure TfrmPrincipal.FormDestroy(Sender: TObject);
+begin
+  Application.Terminate;
+  TerminateProcess(GetCurrentProcess, 0);
+end;
+
+procedure TfrmPrincipal.Image3MouseMove(Sender: TObject; Shift: TShiftState; X,Y: Integer);
+begin
+  ReleaseCapture();
+  PostMessage(Handle, WM_SYSCOMMAND, $F012, 0);
+  Posicao_Janela;
+end;
+
+//###########################################################################
+// EVENTO DO TIMER DE ATUALIZAÇÃO DA DATA E DA HORA
+//###########################################################################
+procedure TfrmPrincipal.tmPrincipalTimer(Sender: TObject);
+begin
+  lblData.Caption := DataPorExtenso;
+  lblHora.Caption := HoraStr;
+end;
+
+//###########################################################################
+// EVENTOS DE EXECUÇÃO DAS AÇÕES DOS BOTÕES
+//###########################################################################
+procedure TfrmPrincipal.actCentroCustosPaiExecute(Sender: TObject);
+begin
+  Abrir_Janela('TfrmCentroCustosPai', False, pnlPrincipal);
+end;
+
+procedure TfrmPrincipal.actFecharSistemaExecute(Sender: TObject);
+begin
+  Close;
+end;
+
+//###########################################################################
+// FUNÇÕES DE AUXÍLIO DO FORM
+//###########################################################################
+procedure TfrmPrincipal.Posicao_Janela;
+begin
+  gTopo          := Top;
+  gEsquerda      := Left;
+  gLargura       := Width;
+  gComprimento   := Height;
+  gPosicao       := poMainFormCenter;
+end;
+
+end.

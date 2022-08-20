@@ -1,0 +1,97 @@
+unit View.Frame.Agrupamento;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Data.DB,
+  Datasnap.DBClient,
+  Controller.Interfaces,
+  Model.Agrupamento,
+  Auxiliar.DataGrid,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TFrameAgrupamento = class(TFrame, iObserver)
+    dbgPai: TDBGrid;
+    dbgFilho: TDBGrid;
+    LabelCreditos: TLabel;
+    LabelDebitos: TLabel;
+  private
+    FAgrupamento: TModelAgrupamento;
+  public
+    constructor Create(AOwner: TComponent) ; override;
+    destructor Destroy; override;
+    procedure Atualizar(Notificacao: TNotificacao);
+  end;
+
+implementation
+
+{$R *.dfm}
+
+{ TFrameAgrupamento }
+
+constructor TFrameAgrupamento.Create(AOwner: TComponent);
+begin
+  inherited;
+
+end;
+
+destructor TFrameAgrupamento.Destroy;
+begin
+  inherited;
+end;
+
+procedure TFrameAgrupamento.Atualizar(Notificacao: TNotificacao);
+var
+  FCodPai, FCodFilho: String;
+  FValor: Real;
+
+begin
+  FCodPai   := Copy(Notificacao.CentroCustos, 1, 2);
+  FCodFilho := Copy(Notificacao.CentroCustos, 3, 4);
+  FValor    := Notificacao.Valor;
+
+//  // Localiza o Centro de Custo para somar o valor já lançado anteriormente
+//  if cdsPai.Locate('CENTROCUSTOS', FCodPai, []) then
+//     begin
+//       cdsPai.Edit;
+//       cdsPai.FieldByName('VALOR').AsFloat := cdsPai.FieldByName('VALOR').AsFloat + FValor;
+//       cdsPai.Post;
+//       cdsPai.First;
+//     end
+//  else
+//     begin
+//       cdsPai.AppendRecord([FCodPai, FValor]);
+//       if cdsPai.RecordCount = 2 then
+//          DimensionarGrid(dbgPai);
+//     end;
+//
+//  if cdsFilho.Locate('CENTROCUSTOS', FCodFilho, []) then
+//     begin
+//       cdsFilho.Edit;
+//       cdsFilho.FieldByName('VALOR').AsFloat := cdsFilho.FieldByName('VALOR').AsFloat + FValor;
+//       cdsFilho.Post;
+//       cdsFilho.First;
+//     end
+//  else
+//     begin
+//       cdsFilho.AppendRecord([FCodFilho, FValor]);
+//       if cdsFilho.RecordCount = 2 then
+//          DimensionarGrid(dbgFilho);
+//     end;
+end;
+
+end.

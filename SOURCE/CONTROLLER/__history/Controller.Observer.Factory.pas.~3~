@@ -1,0 +1,60 @@
+unit Controller.Observer.Factory;
+
+interface
+
+uses
+  System.SysUtils,
+  System.Generics.Collections,
+  Vcl.Dialogs,
+  Controller.Observer.Interfaces,
+  Auxiliar.Variaveis.Globais;
+
+type
+  TObserver = class(TInterfacedObject, iSubject)
+  private
+    FLista : TList<iObserver>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    class function New: iSubject;
+    function Add(Value: iObserver): iSubject;
+    function Notify(Value: TRecordTotais): iSubject;
+  end;
+
+implementation
+
+{ TObserver }
+
+constructor TObserver.Create;
+begin
+  FLista := TList<iObserver>.Create;
+end;
+
+destructor TObserver.Destroy;
+begin
+  FreeAndNil(FLista);
+  inherited;
+end;
+
+class function TObserver.New: iSubject;
+begin
+  Result := Self.Create;
+end;
+
+function TObserver.Add(Value: iObserver): iSubject;
+begin
+  Result := Self;
+  FLista.Add(Value);
+end;
+
+function TObserver.Notify(Value: TRecordTotais): iSubject;
+var
+  I: Integer;
+
+begin
+  Result := Self;
+  for I := 0 to pred(FLista.Count) do
+    FLista[I].UpdateTotais(Value);
+end;
+
+end.
